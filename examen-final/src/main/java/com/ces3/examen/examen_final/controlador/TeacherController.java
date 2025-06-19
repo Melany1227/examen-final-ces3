@@ -1,19 +1,11 @@
 package com.ces3.examen.examen_final.controlador;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ces3.examen.examen_final.modelo.Teacher;
 import com.ces3.examen.examen_final.repositorio.TeacherRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/teachers")
@@ -42,5 +34,18 @@ public class TeacherController {
             resultado.add(mapa);
         }
         return resultado;
+    }
+
+    @GetMapping("/{id}/salario-anual")
+    public Map<String, Object> obtenerSalarioAnualPorId(@PathVariable Long id) {
+        Map<String, Object> respuesta = new HashMap<>();
+        try {
+            Teacher t = teacherRepository.findById(id).orElseThrow();
+            respuesta.put("nombre", t.getName() + " " + t.getLastName());
+            respuesta.put("salarioAnual", t.calcularSalarioAnual());
+        } catch (NoSuchElementException e) {
+            respuesta.put("error", "Profesor no encontrado");
+        }
+        return respuesta;
     }
 }
